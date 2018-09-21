@@ -24,8 +24,8 @@ lr.on('line', function (line) {
             url: '',
             gender: splitLine[5],
             scale: splitLine[4]
-        });  
-        
+        });
+
         lr.resume();
 
     }else if(splitLine[5].toLowerCase() === "female"){ //Female case
@@ -38,7 +38,7 @@ lr.on('line', function (line) {
             gender: splitLine[5],
             scale: splitLine[4]
         });
-        lr.resume();   
+        lr.resume();
 
     }else{
         lr.resume();
@@ -49,7 +49,7 @@ lr.on('line', function (line) {
 lr.on('end', function () {
 
     readGeojson();
-    
+
 });
 
 
@@ -77,7 +77,7 @@ function readGeojson(file, tilecount){
         if (err) throw err;
 
         var geojson = JSON.parse(data);
-        
+
         var finalGeojson = {
             "type": "FeatureCollection",
             "features": []
@@ -90,7 +90,7 @@ function readGeojson(file, tilecount){
                 geojson.features[key].properties.wikipedia_link = objValues.url;
                 geojson.features[key].properties.gender = objValues.gender;
                 geojson.features[key].properties.scale = objValues.scale;
-                
+
                 if(!tratadosList.has(geojson.features[key].properties.name)){
 
                     tratadosList.add(geojson.features[key].properties.name);
@@ -100,11 +100,11 @@ function readGeojson(file, tilecount){
                         stats.numFemale++;
                      }else if (objValues.gender.toLowerCase() === 'female'){
                         stats.numFemale++;
-                        stats.numNoLink++;                 
-                        noLinkList += `\n${geojson.features[key].properties.name}`;                                                             
+                        stats.numNoLink++;
+                        noLinkList += `\n${geojson.features[key].properties.name}`;
                      }else{
                         stats.numMale++;
-                     }                    
+                     }
                 }
 
                 finalGeojson.features.push(geojson.features[key]);
@@ -135,17 +135,16 @@ function readGeojson(file, tilecount){
                 console.error(err);
             }
             console.log('stat.txt has been saved!');
-          });  
-          
+          });
+
           fs.writeFileSync(path.join(__dirname, `data/${folder}/noLinkList.txt`), noLinkList, 'utf8', (err) => {
             if (err) {
                 throw err;
                 console.error(err);
             }
             console.log('noLinkList.txt been saved!');
-          });          
+          });
 
       });
 
 }
-

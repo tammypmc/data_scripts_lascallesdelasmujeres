@@ -30,7 +30,7 @@ function writeFileMapNames(){
   for (let item of mapNames.keys()){
     mapNamesString += '\', \''+item;
   };
-  fs.writeFile(path.join(__dirname, `data/mapNames.txt`), '['+mapNamesString+']', function(err) {});  
+  fs.writeFile(path.join(__dirname, `data/mapNames.txt`), '['+mapNamesString+']', function(err) {});
 }
 
 
@@ -55,27 +55,27 @@ function clip(lines, tile) {
 
 
 function cleanLines (lines) {
-  
+
   const logStream = fs.createWriteStream( path.join(__dirname, `data/list.csv`), {encoding: 'utf8', flags: 'a'});
 
   lines.features = lines.features.filter(function(line){
 
     if( isLine(line.geometry.type) && isValidHighway(line.properties)){
-      
+
       var roadName = line.properties.name;
+      var roadAltName = line.properties.alt_name;
+
       //if(line.properties.wikipedia) console.log('wikipedia', line.properties.wikipedia);
       //if(line.properties.wikidata) console.log('wikipedia', line.properties.wikidata);
-     
+
       if(line.properties.name && isValidRoadname(line.properties.name)){
-
-
         if(!listStreetNames.has(line.properties.name)){
-          
-          const cleanName = cleanRoadName(roadName);          
+
+          const cleanName = cleanRoadName(roadName);
           logStream.write(`${line.properties.name};${cleanName}\n`);
-          listStreetNames.add(line.properties.name);                   
+          listStreetNames.add(line.properties.name);
         }
-        
+
         //var listnames = roadName.split(' ');
         //mapNames.add(listnames[0]);
 
@@ -87,7 +87,26 @@ function cleanLines (lines) {
           scale: ''
         };
         return true;
+
+      }else{
+        if(isValidRoadname(line.properties.alt_name)){
+          const cleanName = cleanRoadName(roadAltName);
+          logStream.write(`${line.properties.alt_name};${cleanName}\n`);
+          listStreetNames.add(line.properties.alt_name);
+        }
+
+        line.properties = {
+          name: line.properties.alt_name,
+          id: line.properties['@id'],
+          wikipedia_link: '',
+          gender: 'unknown',
+          scale: ''
+        };
+        return true;
+
       }
+
+
     }
   });
 
@@ -103,7 +122,7 @@ function isLine( geomType){
 function isValidHighway(properties){
 
   if(properties.highway){
-    return (properties.highway == "pedestrian" || properties.highway == "footway" || properties.highway == "residential" || 
+    return (properties.highway == "pedestrian" || properties.highway == "footway" || properties.highway == "residential" ||
     properties.highway == "unclassified" || properties.highway == "trunk" || properties.highway == "service" ||
     properties.highway == "tertiary" || properties.highway == "primary" || properties.highway == "bridge" ||
     properties.highway == "secondary" || properties.highway == "path" || properties.highway == "living_street");
@@ -113,7 +132,8 @@ function isValidHighway(properties){
 }
 
 function isValidRoadname(roadName){
-  return (roadName !== undefined &&  roadName !== 'undefined' && !(/\d/.test(roadName) || roadName.match(/main/i) || roadName.match(/Torrent/i) || roadName.match(/Viaducte/i) || roadName.match(/Carretera/i) || roadName.match(/Túnel/i) || roadName.match(/Ctra/i) || roadName.match(/Viaducte/i) || roadName.match(/Moll/i) || roadName.match(/Accés/i) || roadName.match(/Carril/i) || roadName.match(/Costa/i) || roadName.match(/Corriol/i) || roadName.match(/Pista/i) || roadName.match(/Autovia/i)) );
+  return (roadName !== undefined &&  roadName !== 'undefined' && !(/\d/.test(roadName) || roadName.match(/main/i) || roadName.match(/Torrent/i) || roadName.match(/Viaducte/i) || roadName.match(/Carretera/i) || roadName.match(/Túnel/i) || roadName.match(/Ctra/i)
+  || roadName.match(/Viaducte/i) || roadName.match(/Moll/i) || roadName.match(/Accés/i) || roadName.match(/Carril/i) || roadName.match(/Costa/i) || roadName.match(/Corriol/i) || roadName.match(/Pista/i) || roadName.match(/Autovia/i)) );
 }
 
 
@@ -124,17 +144,17 @@ function cleanRoadName(roadName){
   var filterList2 = ['de la ', 'de l\'', 'de les ', 'dels ', 'del ', 'de ', 'd\'']; */
 
   /*Spanish*/
-  var filterList = ['Paseo','Río', 'Avenida', 'Hacienda', 'Puerto', 'Callejón', 'Calle', 'Calzada', 'Camino', 'Av.','Paso', 'Cañada', 'Minas', 'Cerrada', 
-    'Puebla', 'Principal', 'Central','Primera', 'Segunda', 'Portón', 'Lateral', 'Calz.', 'Corrido', 'Casa', 'Villa', 'Mejía', 
-    'Vía', 'Via', 'Real', 'Isla', 'Avendida', 'Marisma', 'Rada', 'Raudal', 'Ribera', 'Embocadura', 'Cataratas', 'Médanos', 
-    'Mirador', 'Av', 'Jardín',  'A.', 'Circuito','Gral.', 'Rincón', 'Calz', 'Rinconada', 'Periférico', 'Cda', 'Jardin', 
-    'C.', 'Callejon', 'Colegio', 'Valle', 'avenida', 'camino', 'calle', 'Calle', 'Rotonda', 'Parqueo', 'Parque', 'entrada', 
-    'Entrada', 'sendero', 'Sendero', 'Pasaje', 'pasaje', 'Puerto', 'Ciudad', 'Puente', 'Boulevard', 'Agrosuperior', 'Bodegas', 
-    'Autobanco', 'SkyTrace', 'Plaza', 'Motel', 'C/', 'Rotonda', 'Drive', 'Residencial', 'Automac', 
+  var filterList = ['Paseo','Río', 'Avenida', 'Hacienda', 'Puerto', 'Callejón', 'Calle', 'Calzada', 'Camino', 'Av.','Paso', 'Cañada', 'Minas', 'Cerrada',
+    'Puebla', 'Principal', 'Central','Primera', 'Segunda', 'Portón', 'Lateral', 'Calz.', 'Corrido', 'Casa', 'Villa', 'Mejía',
+    'Vía', 'Via', 'Real', 'Isla', 'Avendida', 'Marisma', 'Rada', 'Raudal', 'Ribera', 'Embocadura', 'Cataratas', 'Médanos',
+    'Mirador', 'Av', 'Jardín',  'A.', 'Circuito','Gral.', 'Rincón', 'Calz', 'Rinconada', 'Periférico', 'Cda', 'Jardin',
+    'C.', 'Callejon', 'Colegio', 'Valle', 'avenida', 'camino', 'calle', 'Calle', 'Rotonda', 'Parqueo', 'Parque', 'entrada',
+    'Entrada', 'sendero', 'Sendero', 'Pasaje', 'pasaje', 'Puerto', 'Ciudad', 'Puente', 'Boulevard', 'Agrosuperior', 'Bodegas',
+    'Autobanco', 'SkyTrace', 'Plaza', 'Motel', 'C/', 'Rotonda', 'Drive', 'Residencial', 'Automac',
     'Auto', 'Transcersal', 'Inter', 'Pasillo', 'Centro', 'Caminito', 'Arandas', 'Proveedores', 'Cajero', 'Zona', 'Primer', 'Res.'
   ];
   var filterList2 = ['de las ', 'de la ', 'de los ', 'de lo ', 'del ', 'de ', 'en '];
-     
+
   for(var i =0; i< filterList.length; i++){
 
     if(roadName.indexOf(filterList[i]) !== -1){
@@ -142,7 +162,7 @@ function cleanRoadName(roadName){
       var name = roadName.replace(filterList[i], '').trim();
 
       for(var j=0; j < filterList2.length; j++){
-        
+
         if(name.indexOf(filterList2[j]) !== -1){
           name = name.replace(filterList2[j], '').trim();
         }
@@ -154,5 +174,3 @@ function cleanRoadName(roadName){
   }
   return roadName;
 }
-
-
