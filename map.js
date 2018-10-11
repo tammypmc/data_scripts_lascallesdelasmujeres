@@ -1,4 +1,3 @@
-
 'use strict';
 
 const turf = require('turf');
@@ -93,17 +92,18 @@ function cleanLines (lines) {
         if(isValidRoadname(line.properties.alt_name)){
           const cleanName = cleanRoadName(roadAltName);
           logStream.write(`${line.properties.alt_name};${cleanName}\n`);
-          listStreetNames.add(line.properties.name);
+          listStreetNames.add(line.properties.alt_name);
         }
 
-                line.properties = {
-                  name: line.properties.alt_name,
-                  id: line.properties['@id'],
-                  wikipedia_link: '',
-                  gender: 'unknown',
-                  scale: ''
-                };
-                return true;
+        line.properties = {
+          name: line.properties.alt_name,
+          id: line.properties['@id'],
+          wikipedia_link: '',
+          gender: 'unknown',
+          scale: ''
+        };
+        return true;
+
       }
 
 
@@ -140,8 +140,7 @@ function isValidRoadname(roadName){
 function cleanRoadName(roadName){
 
   /*Catalan*/
-/*   var filterList = ['Avinguda', 'avinguda', 'Túnel', 'Camí', 'Carrer', 'Ctra.',
-'Passatge', 'Ronda', 'Passeig', 'Viaducte', 'Via', 'carrer', 'Torrent', 'camí', 'Rotonda', 'Plaça', 'Jardins', 'Jardí', 'Parc', 'Accés', 'Baixada', 'Rambla', 'Travessera', 'travessera', 'Riera', 'plaça', 'Gran', 'Passage', 'Placeta', 'Sant', 'antiga', 'Ptge.', 'Pont', 'Travessia', 'la', 'Cerrer', 'Pla', 'Marquès', 'Av.', 'Antic', 'Cami', 'sendero', 'entrada', 'avinguda', 'cami', 'passeig', 'Nostra', 'passatge', 'Pista', 'Corriol', 'Costa'];
+/*   var filterList = ['Avinguda', 'avinguda', 'Túnel', 'Camí', 'Carrer', 'Ctra.', 'Passatge', 'Ronda', 'Passeig', 'Viaducte', 'Via', 'carrer', 'Torrent', 'camí', 'Rotonda', 'Plaça', 'Jardins', 'Jardí', 'Parc', 'Accés', 'Baixada', 'Rambla', 'Travessera', 'travessera', 'Riera', 'plaça', 'Gran', 'Passage', 'Placeta', 'Sant', 'antiga', 'Ptge.', 'Pont', 'Travessia', 'la', 'Cerrer', 'Pla', 'Marquès', 'Av.', 'Antic', 'Cami', 'sendero', 'entrada', 'avinguda', 'cami', 'passeig', 'Nostra', 'passatge', 'Pista', 'Corriol', 'Costa'];
   var filterList2 = ['de la ', 'de l\'', 'de les ', 'dels ', 'del ', 'de ', 'd\'']; */
 
   /*Spanish*/
@@ -175,4 +174,3 @@ function cleanRoadName(roadName){
   }
   return roadName;
 }
-
